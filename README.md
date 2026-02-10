@@ -74,3 +74,11 @@ The app is compatible with Vercel: it exports the Express app and only calls `li
 - Connect the repo in [Vercel](https://vercel.com); Vercel will detect `server.js` and use it as the serverless entry.
 - Ensure `config.json` is in the repo so upload routes are loaded.
 - For local dev with Vercel CLI: `vercel dev`.
+
+## Deploy on Render
+
+The same repo works on [Render](https://render.com): on Render, `VERCEL` is not set, so the server runs with `app.listen(PORT)` and Render sets `PORT` automatically.
+
+- **Blueprint (recommended):** In Render Dashboard → **New** → **Blueprint** → connect this repo. Render will use the root `render.yaml` to create a Web Service.
+- **Manual:** **New** → **Web Service** → connect repo → set **Build Command** to `npm install`, **Start Command** to `npm start`. Optionally set **Health Check Path** to `/health`.
+- The free plan is enough to run the mock; the service will be available at `https://<service-name>.onrender.com`.

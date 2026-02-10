@@ -1,0 +1,16 @@
+# Render Blueprint: Mock HTTP Output API
+# Deploy: Dashboard → New → Blueprint → connect this repo
+services:
+  - type: web
+    name: mock-http-output
+    runtime: node
+    plan: free
+
+    buildCommand: npm install
+    startCommand: npm start
+
+    # Health check for zero-downtime deploys (uses GET /health)
+    healthCheckPath: /health
+
+    # Auto-deploy on push to the linked branch
+    autoDeployTrigger: commit
