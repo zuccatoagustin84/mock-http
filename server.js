@@ -401,17 +401,21 @@ app.get('/', (_req, res) => {
   res.type('html').send(html);
 });
 
-// ── Start ───────────────────────────────────────────────────────────────────
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Mock HTTP Output server listening on port ${PORT}`);
-  console.log(`  Control panel: http://localhost:${PORT}/`);
-  console.log(
-    '  Upload (from config):',
-    uploadRoute.paths.map((p) => uploadRoute.method + ' ' + p).join(', '),
-    '-> responds based on current behavior'
-  );
-  console.log('  GET  /printapi/ping     -> 200 (always)');
-  console.log('  GET  /health            -> 200 (always)');
-});
+// ── Start (local/Docker) ──────────────────────────────────────────────────────
+// On Vercel we only export the app; the platform invokes it as a serverless function.
+if (!process.env.VERCEL) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Mock HTTP Output server listening on port ${PORT}`);
+    console.log(`  Control panel: http://localhost:${PORT}/`);
+    console.log(
+      '  Upload (from config):',
+      uploadRoute.paths.map((p) => uploadRoute.method + ' ' + p).join(', '),
+      '-> responds based on current behavior'
+    );
+    console.log('  GET  /printapi/ping     -> 200 (always)');
+    console.log('  GET  /health            -> 200 (always)');
+  });
+}
 
-module.exports = server;
+// Export the Express app for Vercel serverless; unused when running with listen().
+module.exports = app;

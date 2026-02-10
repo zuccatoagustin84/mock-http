@@ -66,3 +66,11 @@ cd development/mock-http-output
 npm install
 npm start
 ```
+
+## Deploy on Vercel
+
+The app is compatible with Vercel: it exports the Express app and only calls `listen()` when not running on Vercel (`VERCEL` env is unset).
+
+- Connect the repo in [Vercel](https://vercel.com); Vercel will detect `server.js` and use it as the serverless entry.
+- Ensure `config.json` is in the repo so upload routes are loaded.
+- For local dev with Vercel CLI: `vercel dev`.
