@@ -1,0 +1,13 @@
+# Render Blueprint: Mock HTTP Output API (Node native, no Docker)
+# Deploy: Dashboard → New → Blueprint → connect this repo → set "Blueprint file path" to render-node.yaml
+services:
+  - type: web
+    name: mock-http-output-node
+    runtime: node
+    plan: free
+
+    buildCommand: npm install
+    startCommand: npm start
+
+    healthCheckPath: /health
+    autoDeployTrigger: commit

@@ -1,16 +1,19 @@
 # Render Blueprint: Mock HTTP Output API
 # Deploy: Dashboard → New → Blueprint → connect this repo
+#
+# Uses Docker (Dockerfile). For native Node instead, switch to:
+#   runtime: node
+#   buildCommand: npm install
+#   startCommand: npm start
+#   (and remove the dockerfilePath / docker block)
 services:
   - type: web
     name: mock-http-output
-    runtime: node
+    runtime: docker
     plan: free
 
-    buildCommand: npm install
-    startCommand: npm start
+    # Build from repo root; Render runs the image and sets PORT
+    dockerfilePath: ./Dockerfile
 
-    # Health check for zero-downtime deploys (uses GET /health)
     healthCheckPath: /health
-
-    # Auto-deploy on push to the linked branch
     autoDeployTrigger: commit

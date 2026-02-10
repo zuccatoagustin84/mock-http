@@ -1,0 +1,27 @@
+# Mock HTTP Output API – run locally with Docker Compose.
+# Same image as Render (Dockerfile). Port 3000 in container → 21203 on host.
+#
+#   docker compose up -d          # background
+#   docker compose up              # foreground, logs in terminal
+#
+#   Control panel:  http://localhost:21203/
+#   Health:         http://localhost:21203/health
+#   Upload:         POST http://localhost:21203/upload (field: pdf)
+services:
+  mock-http-output:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "21203:3000"
+    environment:
+      - PORT=3000
+      # Optional: MOCK_API_TOKEN for Basic auth (username=token, password empty)
+      # - MOCK_API_TOKEN=your-secret
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health',r=>process.exit(r.statusCode===200?0:1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

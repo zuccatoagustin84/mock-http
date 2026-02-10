@@ -41,31 +41,62 @@ Switch between modes with one click. The log shows every received request with s
 | `GET /printapi/ping` | Ping (200 always) |
 | `GET /health` | Health check (200 always) |
 
-## Run with Docker Compose
+## Run locally
+
+From the repo root. Pick one of these:
+
+| Method | Command | URL |
+|--------|---------|-----|
+| **Node** | `npm install && npm start` | http://localhost:3000 |
+| **Docker** | `docker build -t mock-http . && docker run -p 21203:3000 -e PORT=3000 mock-http` | http://localhost:21203 |
+| **Docker Compose** | `docker compose up -d` | http://localhost:21203 |
+| **Vercel (local)** | `npx vercel dev` | per Vercel CLI |
+
+### 1. Node (no Docker)
 
 ```bash
-cd development/mock-http-output
-docker compose up -d
+npm install
+npm start
+```
+
+Server: **http://localhost:3000**
+
+### 2. Docker (single container)
+
+```bash
+docker build -t mock-http .
+docker run -p 21203:3000 -e PORT=3000 mock-http
 ```
 
 Server: **http://localhost:21203**
 
-### Worker configuration
-
-- `baseUrl`: `http://localhost:21203`
-- `uploadPath`: `upload`
-- `pingPath`: `printapi/ping`
-- (optional: `apiToken` for Basic auth)
-
-Then toggle chaos from the panel at http://localhost:21203 whenever you want to simulate failures.
-
-## Run locally (no Docker)
+### 3. Docker Compose
 
 ```bash
-cd development/mock-http-output
-npm install
-npm start
+docker compose up -d
 ```
+
+Server: **http://localhost:21203**. Same image as Render. Use `docker compose up` to see logs in the terminal.
+
+### 4. Vercel (local serverless)
+
+```bash
+npm install
+npx vercel dev
+```
+
+Runs the app in Vercel’s local serverless mode (good for testing the Vercel deploy path).
+
+---
+
+### Worker configuration (local)
+
+- **baseUrl:** `http://localhost:3000` (Node) or `http://localhost:21203` (Docker / Compose)
+- **uploadPath:** `upload`
+- **pingPath:** `printapi/ping`
+- (optional: **apiToken** for Basic auth)
+
+Toggle chaos from the control panel at the URL above.
 
 ## Deploy on Vercel
 
@@ -77,8 +108,10 @@ The app is compatible with Vercel: it exports the Express app and only calls `li
 
 ## Deploy on Render
 
-The same repo works on [Render](https://render.com): on Render, `VERCEL` is not set, so the server runs with `app.listen(PORT)` and Render sets `PORT` automatically.
+On Render, `VERCEL` is not set, so the server runs with `app.listen(PORT)`; Render sets `PORT` automatically.
 
-- **Blueprint (recommended):** In Render Dashboard → **New** → **Blueprint** → connect this repo. Render will use the root `render.yaml` to create a Web Service.
-- **Manual:** **New** → **Web Service** → connect repo → set **Build Command** to `npm install`, **Start Command** to `npm start`. Optionally set **Health Check Path** to `/health`.
-- The free plan is enough to run the mock; the service will be available at `https://<service-name>.onrender.com`.
+- **Blueprint (recommended):** Dashboard → **New** → **Blueprint** → connect this repo.
+  - **Docker:** use default `render.yaml` (builds from `Dockerfile`).
+  - **Node native:** set Blueprint path to `render-node.yaml`.
+- **Manual:** **New** → **Web Service** → connect repo → Build: `npm install`, Start: `npm start`, Health path: `/health`.
+- Free plan is enough; URL: `https://<service-name>.onrender.com`.
