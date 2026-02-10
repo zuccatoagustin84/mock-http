@@ -1,0 +1,6 @@
+{
+  "upload": {
+    "method": "POST",
+    "path": ["/upload", "/to/upload/main"]
+  }
+}
